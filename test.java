@@ -8104,11 +8104,8 @@ class Solution {
 				if (nums[i] > nums[i-1] + 1) {
 					addRes(startIndex, i-1, res, nums);
 					startIndex = i;
-					if (i == nums.length - 1) {
-						addRes(i, i, res, nums);
-						break;
-					}
-				} else if (i == nums.length - 1){
+				}
+				if (i == nums.length - 1){
 					addRes(startIndex, i, res, nums);
 				}
 			}
@@ -8156,11 +8153,150 @@ class Solution {
     }
 }
 
-// 234. Palindrome Linked List (AUG 2020)
+// 230. Kth Smallest Element in a BST (AUG 2020)
+// Follow up: using a doubly linked list structure to connect all nodes: see below
+/**
+ * Definition for a doubly linkedlist binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *	   TreeNode prev;
+ *	   TreeNode next;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    public int kthSmallest(TreeNode root, int k) {
+		Stack<TreeNode> S = new Stack<>();
+		TreeNode p = root;
+
+		while (p != null) {
+			S.push(p);
+			p = p.left;
+		}
+		int count = 0;
+		while (count < k) {
+			count++;
+			TreeNode q = S.pop();
+			if (count == k) {
+				return q.val;
+			}
+			if (q.right == null) {
+				continue;
+			}
+			p = q.right;
+			while (p != null) {
+				S.push(p);
+				p = p.left;
+			}
+		}
+		return 0;
+	}
+}
+
+// 231. Power of Two (AUG 2020)
 
 class Solution {
+    public boolean isPowerOfTwo(int n) {
+		if (n == 0) return false;
+		long x = long(n);
+		return (x & (-x)) == x;
+	}
+}
+
+// 232. Implement Queue using Stacks
+
+class MyQueue {
+	private Stack<Integer> S1, S2;
+	private int top;
+
+    /** Initialize your data structure here. */
+    public MyQueue() {
+		S1 = new Stack<>();
+		S2 = new Stack<>();
+    }
+
+    /** Push element x to the back of queue. */
+    public void push(int x) {
+		if (S1.isEmpty()) {
+			top = x;
+		}
+		S1.push(x);
+	}
+    
+    /** Removes the element from in front of queue and returns that element. */
+    public int pop() {
+		if (S2.isEmpty()) {
+			while (!S1.isEmpty()) {
+				S2.push(S1.pop());
+			}
+		}
+		return S2.pop();
+    }
+    
+    /** Get the front element. */
+    public int peek() {
+		if (!S2.isEmpty()) {
+			return S2.peek();
+		}
+		return top;
+    }
+    
+    /** Returns whether the queue is empty. */
+    public boolean empty() {
+		return S1.isEmpty() && S2.isEmpty();
+    }
+}
+
+// 234. Palindrome Linked List (AUG 2020) reverse the second half
+
+class Solution {
+	private ListNode reverseList(ListNode head) {
+		ListNode H = new ListNode();
+		H.next = head;
+		ListNode p = H.next;
+
+		while (p.next != null) {
+			ListNode q = p.next;
+			p.next = q.next;
+			q.next = H.next;
+			H.next = q;
+		}
+		return H.next;
+	}
+	
     public boolean isPalindrome(ListNode head) {
-        
+		if (head == null) {
+			return true;
+		}
+		ListNode fast = head, slow = head;
+		while (fast != null && fast.next != null) {
+			slow = slow.next;
+			fast = fast.next.next;
+		}
+		if (fast != null) {
+			slow = slow.next;
+		}
+		if (slow == null) {
+			return true;
+		}
+		ListNode rvsdHead = reverseList(slow);
+		ListNode p = rvsdHead;
+		while (p != null) {
+			if (head.val != p.val) {
+				return false;
+			}
+			p = p.next;
+			head = head.next;
+		}
+		return true;
     }
 }
 
@@ -8304,6 +8440,41 @@ class Solution {
 			}
 		}
 		return res <= s.length() ? res : -1;
+	}
+}
+
+// 442. Find All Duplicates in an Array
+
+class Solution {
+    public List<Integer> findDuplicates(int[] nums) {
+		List<Integer> res = new ArrayList<>();
+		for (int i = 0; i < nums.length;) {
+			if (nums[i] <= 0) {
+				i++;
+				continue;
+			}
+			int pos = nums[i] - 1;
+			if (nums[pos] == -2) {
+				res.add(nums[i]);
+				nums[i] = 0;
+				nums[pos] = -1;
+				i++;
+			} else if (nums[pos] == -1){
+				i++;
+			} else if (nums[pos] == 0) {
+				nums[i++] = 0;
+				nums[pos] = -2;
+			} else {
+				if (pos == i) { // 本题注意没有这里if有可能导致死循环： 目标和当前位置相同
+					nums[i++] = -2;
+					continue;
+				}
+				int tmp = nums[pos];
+				nums[pos] = -2;
+				nums[i] = tmp;
+			}
+		}
+		return res;
 	}
 }
 
