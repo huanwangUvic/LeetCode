@@ -7608,6 +7608,76 @@ class Solution {
 	}
 }
 
+// 203. Remove Linked List Elements
+
+class Solution {
+    public ListNode removeElements(ListNode head, int val) {
+		ListNode newHead = new ListNode(0);
+		newHead.next = head;
+		ListNode p = newHead;
+		
+		while(p != null) {
+			if (p.next == null) {
+				break;
+			}
+			if (p.next.val == val) {
+				p.next = p.next.next;
+				continue;
+			}
+			p = p.next;
+		}
+		
+		return newHead.next;
+	}
+}
+
+// 204. Count Primes
+
+class Solution {
+    public int countPrimes(int n) {
+        int res = 0;
+		if (n < 2) {
+			return 0;
+		}
+		boolean[] notPrime = new boolean[n];
+		
+		for (int i = 2; i < n; i++) {
+			if (notPrime[i] == true) {
+				continue;
+			}
+			res++;
+			for (int j = 2; i * j < n; j++) {
+				notPrime[i*j] = true;
+			}
+		}
+		return res;
+    }
+}
+
+// 205. Isomorphic Strings
+
+class Solution {
+    public boolean isIsomorphic(String s, String t) {
+        if (s.equals(t)) {
+			return true;
+		}
+		Map<Character, Character> M1 = new HashMap<>();
+		Map<Character, Character> M2 = new HashMap<>();
+		for (int i = 0; i < t.length(); i++) {
+			char c1 = s.charAt(i), c2 = t.charAt(i);
+			if (M1.containsKey(c1) && M1.get(c1) != c2) {
+				return false;
+			}
+			if (M2.containsKey(c2) && M2.get(c2) != c1) {
+				return false;
+			}	
+			M1.putIfAbsent(c1, c2);
+			M2.putIfAbsent(c2, c1);
+		}
+		return true;
+    }
+}
+
 // 207.  Course Schedule July 2020
 class Solution {
     public boolean canFinish(int numCourses, int[][] prerequisites) {
@@ -8300,6 +8370,28 @@ class Solution {
     }
 }
 
+// 270. Closet Binary Search Tree Value
+
+class Solution {
+    public int closestValue(TreeNode root, double target) {
+		int closedVal = root.val;
+		TreeNode p = root;
+		while (p != null) {
+			if (p.val == target) {
+				return p.val;
+			}
+			if (Math.abs(target - p.val) < Math.abs(target - closedVal)) {
+				closedVal = p.val;
+			}
+			if (p.val > target) {
+				p = p.left;
+			} else {
+				p = p.right;
+			}
+		}
+		return closedVal;
+	}
+}
 
 // 322. Coin Change
 
@@ -8443,6 +8535,40 @@ class Solution {
 	}
 }
 
+
+// 437. Path Sum III
+
+class Solution {
+	private int pathSumHelper(TreeNode root, int curSum, int target) {
+		int count = 0;
+		if (curSum + root.val == target) {
+			count++;
+		}
+		if (root.left != null) {
+			count += pathSumHelper(root.left, curSum + root.val, target);
+		}
+		if (root.right != null) {
+			count += pathSumHelper(root.right, curSum + root.val, target);
+		}
+		return count;
+	}
+	
+    public int pathSum(TreeNode root, int sum) {
+		int total = 0;
+		if (root == null) {
+			return 0;
+		}
+		total += pathSumHelper(root, 0, sum);
+		if (root.left != null) {
+			total += pathSum(root.left, sum);
+		}
+		if (root.right != null) {
+			total += pathSum(root.right, sum);
+		}
+		return total;
+	}
+}
+
 // 442. Find All Duplicates in an Array
 
 class Solution {
@@ -8543,86 +8669,6 @@ class Solution {
 		this.maze = maze;
 		return hasPathHelper(start, destination, null, visited);
 	}
-}
-
-
-// 203. Remove Linked List Elements
-
-class Solution {
-    public ListNode removeElements(ListNode head, int val) {
-		ListNode newHead = new ListNode(0);
-		newHead.next = head;
-		ListNode p = newHead;
-		
-		while(p != null) {
-			if (p.next == null) {
-				break;
-			}
-			if (p.next.val == val) {
-				p.next = p.next.next;
-				continue;
-			}
-			p = p.next;
-		}
-		
-		return newHead.next;
-	}
-}
-
-// 204. Count Primes
-
-class Solution {
-    public int countPrimes(int n) {
-        int res = 0;
-		if (n < 2) {
-			return 0;
-		}
-		boolean[] notPrime = new boolean[n];
-		
-		for (int i = 2; i < n; i++) {
-			if (notPrime[i] == true) {
-				continue;
-			}
-			res++;
-			for (int j = 2; i * j < n; j++) {
-				notPrime[i*j] = true;
-			}
-		}
-		return res;
-    }
-}
-
-// 205. Isomorphic Strings
-
-class Solution {
-    public boolean isIsomorphic(String s, String t) {
-        if (s.equals(t)) {
-			return true;
-		}
-		Map<Character, Character> M1 = new HashMap<>();
-		Map<Character, Character> M2 = new HashMap<>();
-		for (int i = 0; i < t.length(); i++) {
-			char c1 = s.charAt(i), c2 = t.charAt(i);
-			if (M1.containsKey(c1) && M1.get(c1) != c2) {
-				return false;
-			}
-			if (M2.containsKey(c2) && M2.get(c2) != c1) {
-				return false;
-			}	
-			M1.putIfAbsent(c1, c2);
-			M2.putIfAbsent(c2, c1);
-		}
-		return true;
-    }
-}
-
-// 207. Course Schedule
-
-class Solution {
-    public boolean canFinish(int numCourses, int[][] prerequisites) {
-		boolean[] visited = new boolean[numCourses];
-		
-    }
 }
 
 
@@ -8728,6 +8774,67 @@ class Solution {
 		return maxWidth;
 	}
 }
+
+// 987. Vertical Order Traversal of a Binary Tree (AUG 20)
+
+class Solution {
+	int curLeft;
+	int curRight;
+	Map<Integer, Map<Integer, Integer>> M;
+	
+	private void verticalTraversalHelper(TreeNode root, int x, int y, LinkedList<List<Integer>> res) {
+		M.putIfAbsent(x, new HashMap<>());
+		M.get(x).put(root.val, y);
+		if (res.size() == 0) {
+			res.add(new ArrayList<>(Arrays.asList(root.val)));
+			curLeft = 0;
+			curRight = 0;
+		} else {
+			if (x < curLeft) {
+				res.addFirst(new ArrayList<>());
+				curLeft = x;
+			} else if (x > curRight) {
+				res.add(new ArrayList<>());
+				curRight = x;
+			}
+			List<Integer> yList = res.get(x - curLeft);
+			yList.add(root.val);
+		}
+		if (root.left != null) {
+			verticalTraversalHelper(root.left, x - 1, y + 1, res);
+		}
+		if (root.right != null) {
+			verticalTraversalHelper(root.right, x + 1, y + 1, res);
+		}
+	}
+	
+    public List<List<Integer>> verticalTraversal(TreeNode root) {
+		LinkedList<List<Integer>> res = new LinkedList<>();
+		M = new HashMap<>();
+		if (root == null) return res;
+		verticalTraversalHelper(root, 0, 0, res);
+		for (List<Integer> verList : res) {
+			Collections.sort(verList, new Comparator<Integer>(){
+				public int compare(Integer t1, Integer t2){
+					int y1 = M.get(curLeft).get(t1);
+					int y2 = M.get(curLeft).get(t2);
+					if (y1 == y2) {
+						return t1 - t2;
+					}
+					return y1 - y2;
+				}
+			});
+			curLeft++;
+		}
+		return res;
+	}
+}
+
+
+
+
+
+
 
 
 
