@@ -7712,7 +7712,6 @@ class Solution {
 	}
 }
 
-
 // 208. Implement Trie (Prefix Tree) July 2020
 
 class Trie {
@@ -8393,6 +8392,24 @@ class Solution {
 	}
 }
 
+// 274. H-Index
+
+class Solution {
+    public int hIndex(int[] citations) {
+        Arrays.sort(citations);
+		int hIndx = 0;
+		for (int i = 1; i <= citations.length; i++) {
+			int pos = citations.length - i;
+			if (citations[pos] >= i) {
+				hIndx = i;
+			} else {
+				break;
+			}
+		}
+		return hIndx;
+    }
+}
+
 // 322. Coin Change
 
 class Solution {// top down dp, 23ms
@@ -8533,6 +8550,54 @@ class Solution {
 		}
 		return res <= s.length() ? res : -1;
 	}
+}
+
+// 394. Decode String
+
+class Solution {
+	Map<Integer, Integer> M = new HashMap<>();
+	
+	private int getKEnds (String s, int k_start) {
+		int i = k_start;
+		for (; i < s.length(); i++) {
+			if (!Character.isDigit(s.charAt(i))) {
+				break;
+			}
+		}
+		return i - 1;
+	}
+	
+	private StringBuilder decodeStringHelper(String s, int left, int right) {
+		StringBuilder output = new StringBuilder();
+		for (int i = left; i <= right; i++) {
+			char c = s.charAt(i);
+			if (Character.isLetter(c)) {
+				output.append(c);
+			} else if (Character.isDigit(c)) {
+				int e = getKEnds(s, i);
+				int k = Integer.valueOf(s.substring(i, e + 1));
+				StringBuilder subres = decodeStringHelper(s, e + 2, M.get(e + 1) - 1);
+				for (int j = 0; j < k; j++) {
+					output.append(subres);
+				}
+				i = M.get(e + 1);
+			}
+		}
+		return output;
+	}
+	
+    public String decodeString(String s) {
+		Stack<Integer> S = new Stack<>();
+		for (int i = 0; i < s.length(); i++) {
+			if (s.charAt(i) == '[') {
+				S.push(i);
+			} else if (s.charAt(i) == ']') {
+				int key = S.pop();
+				M.put(key, i);
+			}
+		}
+		return decodeStringHelper(s, 0, s.length() - 1).toString();
+    }
 }
 
 
@@ -8831,8 +8896,71 @@ class Solution {
 }
 
 
+// 994. Rotting Oranges
 
-
+class Solution {
+	int[][] directions = new int[][]{{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+	
+	private boolean affection(int[][] grid, int x, int y) {
+		boolean affected = false;
+		for (int[] direct : directions) {
+			int _x = x + direct[0];
+			int _y = y + direct[1];
+			if (_x >= 0 && _x < grid.length && _y >= 0 && _y < grid[0].length) {
+				if (grid[_x][_y] == 1) {
+					grid[_x][_y] = -1;
+					affected = true;
+				}
+			}
+		}
+		return affected;
+	}
+	
+	private boolean updateGrid(int[][] grid){
+		boolean freshExists = false;
+		for (int[] row : grid) {
+			for (int i = 0; i < row.length; i++) {
+				if (row[i] == -1) {
+					row[i] = 2;
+				} else if (row[i] == 1) {
+					freshExists = true;
+				}
+			}
+		}
+		return freshExists;
+	}
+	
+    public int orangesRotting(int[][] grid) {
+        if (grid.length == 0 || grid[0].length == 0) {
+			return 0;
+		}
+		boolean newAffection = true;
+		int time = 0;
+		while (newAffection) {
+			newAffection = false;
+			for (int i = 0; i < grid.length; i++) {
+				for (int j = 0; j < grid[0].length; j++) {
+					if (grid[i][j] == 2) {
+						if (affection(grid, i, j)) {
+							newAffection = true;
+						}
+					}
+				}
+			}
+			if (newAffection) {
+				time++;
+			}
+			if (updateGrid(grid)) {
+				if (!newAffection) {
+					return -1;
+				}
+			} else {
+				break;
+			}
+		}
+		return time;
+    }
+}
 
 
 

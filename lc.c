@@ -177,6 +177,7 @@ struct ListNode* deleteDuplicates(struct ListNode* head){
 	return head;
 }
 
+
 // 125. Valid Palindrome
 
 char toLowerCase(char c) {
@@ -390,6 +391,17 @@ uint32_t reverseBits(uint32_t n) {
 	return res;
 }
 
+// 191. Number of 1 Bits
+
+int hammingWeight(uint32_t n) {
+	int count = 0;
+	while (n != 0) {
+		count += n & 0x01;
+		n = n >> 1;
+	}
+	return count;
+}
+
 // 228. Summary Ranges 
 
 void addRes(int start, int end, int *nums, char **res, int* curSize){
@@ -508,8 +520,33 @@ int firstUniqChar(char * s) {
 }
 
 
+// 394. Decode String
 
+char * decodeString(char * s){
+	
+}
 
+// 509. Fibonacci Number
+
+int fib(int N){
+	if (N == 0) {
+		return 0;
+	}
+	if (N == 1) {
+		return 1;
+	}
+	return fib(N - 1) + fib(N - 2);
+}
+
+int fib(int N) {
+	if (N == 0) return 0;
+	int* dp = (int *)malloc((N + 1) * sizeof(int));
+	dp[0] = 0; dp[1] = 1;
+	for (int i = 2; i <= N; i++) {
+		dp[i] = dp[i-1] + dp[i-2];
+	}
+	return dp[N];
+}
 
 
 
